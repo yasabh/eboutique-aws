@@ -28,13 +28,14 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
-          # List of microservices
-          services=("frontend" "adservice" "cartservice")
+          # List of microservices with correct paths
+          services=("src/frontend" "src/adservice" "src/cartservice")
 
           # Build and push images for each service
           for service in "${services[@]}"; do
-            docker build -t $ECR_REGISTRY/eboutique/$service:latest ./$service
-            docker push $ECR_REGISTRY/eboutique/$service:latest
+            service_name=$(basename $service)
+            docker build -t $ECR_REGISTRY/eboutique/$service_name:latest $service
+            docker push $ECR_REGISTRY/eboutique/$service_name:latest
           done
 
       - name: Set up kubeconfig for EKS
