@@ -25,17 +25,15 @@ jobs:
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
           docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
 
-      - name: Debug Git Diff Output
-        run: git diff --name-only HEAD~1 HEAD
-
       - name: Detect Modified Services
         id: detect-changes
         run: |
           # Check if there is more than one commit
           if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            # Detect changes between the latest commit and the previous one
             CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^src/' | grep -E '\.(js|py|go|html|yaml|json)$' | cut -d'/' -f2 | sort -u)
           else
-            # In the first commit, consider all services as changed
+            # If only one commit exists, consider all services as changed
             CHANGED_SERVICES=$(find src -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
           fi
 
