@@ -57,6 +57,18 @@ jobs:
             fi
           done
 
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig --name eboutique-cluster --region ${{ secrets.AWS_REGION }}
+
+      - name: Update Kubernetes Deployment for Modified Services
+        if: env.services != ''
+        run: |
+          for service in $services; do
+            echo "Updating Kubernetes deployment for $service..."
+            kubectl set image deployment/$service $service=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/$service:latest || true
+          done
+
       - name: Update Kubernetes Deployment for Modified Services
         if: env.services != ''
         run: |
