@@ -39,6 +39,4 @@ jobs:
       - name: Update Kubernetes Deployment
         run: |
           kubectl set image deployment/frontend frontend=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/frontend:latest
-          kubectl set image deployment/adservice adservice=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/adservice:latest
-          kubectl set image deployment/cartservice cartservice=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/cartservice:latest
 
