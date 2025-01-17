@@ -48,4 +48,5 @@ jobs:
           kubectl apply -k kubernetes-manifests/
 
           # Update images in deployments
-          kubectl set image deployment/frontend frontend=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:latest
+          kubectl set image deployment/frontend server=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:latest
+
