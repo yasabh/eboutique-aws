@@ -29,14 +29,23 @@ jobs:
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
         run: |
-          # Build and push each service
-          services=("frontend" "adservice" "cartservice")  # Add all services here
+          # Define the services under the src/ directory
+          services=("adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frontend" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+
           for service in "${services[@]}"; do
-            docker build -t $ECR_REGISTRY/eboutique/$service:latest ./$service
-            docker push $ECR_REGISTRY/eboutique/$service:latest
+            service_path="src/$service"
+            if [ -d "$service_path" ]; then
+              echo "Building and pushing $service..."
+              docker build -t $ECR_REGISTRY/eboutique/$service:latest $service_path
+              docker push $ECR_REGISTRY/eboutique/$service:latest
+            else
+              echo "Directory $service_path not found, skipping..."
+            fi
           done
 
       - name: Update Kubernetes Deployment
         run: |
-          kubectl set image deployment/frontend frontend=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/frontend:latest
-
+          services=("adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frontend" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+          for service in "${services[@]}"; do
+            kubectl set image deployment/$service $service=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/$service:latest
+          done

@@ -7,6 +7,10 @@
 .skaffold-*.yaml
 .terraform.lock.hcl
 .terraform/*
+terraform-aws/.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
 .venv/
 .vs/
 .vscode/
