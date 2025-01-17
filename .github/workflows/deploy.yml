@@ -28,8 +28,13 @@ jobs:
       - name: Detect Modified Services
         id: detect-changes
         run: |
-          # Get list of changed directories in src/
-          CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^src/' | cut -d'/' -f2 | sort -u)
+          # Check if there is more than one commit
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^src/' | cut -d'/' -f2 | sort -u)
+          else
+            # In the first commit, consider all services as changed
+            CHANGED_SERVICES=$(find src -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+          fi
           echo "Changed services: $CHANGED_SERVICES"
           echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
 
