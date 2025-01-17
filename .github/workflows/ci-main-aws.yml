@@ -28,11 +28,14 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
+          # List of microservices with correct paths
           services=("src/frontend")
+
+          # Build and push images for each service
           for service in "${services[@]}"; do
             service_name=$(basename $service)
-            docker build --no-cache -t $ECR_REGISTRY/eboutique/$service_name:latest $service
-            docker push $ECR_REGISTRY/eboutique/$service_name:latest
+            docker build -t $ECR_REGISTRY/eboutique/$service_name:$GITHUB_SHA $service
+            docker push $ECR_REGISTRY/eboutique/$service_name:$GITHUB_SHA
           done
 
       - name: Set up kubeconfig for EKS
@@ -41,5 +44,8 @@ jobs:
 
       - name: Deploy to EKS
         run: |
+          # Apply Kubernetes manifests
           kubectl apply -k kubernetes-manifests/
-          kubectl set image deployment/frontend server=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:latest
+
+          # Update images in deployments
+          kubectl set image deployment/frontend server=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:${{ github.sha }}
