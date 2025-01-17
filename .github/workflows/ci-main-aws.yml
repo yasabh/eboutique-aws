@@ -29,7 +29,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
           # List of microservices with correct paths
-          services=("src/frontend" "src/adservice" "src/cartservice")
+          services=("src/frontend")
 
           # Build and push images for each service
           for service in "${services[@]}"; do
@@ -49,5 +49,3 @@ jobs:
 
           # Update images in deployments
           kubectl set image deployment/frontend frontend=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:latest
-          kubectl set image deployment/adservice adservice=${{ steps.ecr-login.outputs.registry }}/eboutique/adservice:latest
-          kubectl set image deployment/cartservice cartservice=${{ steps.ecr-login.outputs.registry }}/eboutique/cartservice:latest
