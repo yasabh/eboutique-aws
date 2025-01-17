@@ -35,6 +35,9 @@ jobs:
             # In the first commit, consider all services as changed
             CHANGED_SERVICES=$(find src -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
           fi
+
+          # Convert the output to a single space-separated line
+          CHANGED_SERVICES=$(echo $CHANGED_SERVICES | tr '\n' ' ')
           echo "Changed services: $CHANGED_SERVICES"
           echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
 
