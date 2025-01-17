@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to EKS
         run: |
           # Apply Kubernetes manifests
-          kubectl apply -f kubernetes-manifests/
+          kubectl apply -k kubernetes-manifests/
 
           # Update images in deployments
           kubectl set image deployment/frontend frontend=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:latest
