@@ -25,27 +25,34 @@ jobs:
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
           docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
 
-      - name: Build and Push Docker Images
+      - name: Detect Modified Services
+        id: detect-changes
+        run: |
+          # Get list of changed directories in src/
+          CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^src/' | cut -d'/' -f2 | sort -u)
+          echo "Changed services: $CHANGED_SERVICES"
+          echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
+
+      - name: Build and Push Modified Docker Images
+        if: env.services != ''
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
         run: |
-          # Define the services under the src/ directory
-          services=("adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frontend" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
-
-          for service in "${services[@]}"; do
+          for service in $services; do
             service_path="src/$service"
-            if [ -d "$service_path" ]; then
+            if [ -f "$service_path/Dockerfile" ]; then
               echo "Building and pushing $service..."
               docker build -t $ECR_REGISTRY/eboutique/$service:latest $service_path
               docker push $ECR_REGISTRY/eboutique/$service:latest
             else
-              echo "Directory $service_path not found, skipping..."
+              echo "Dockerfile not found in $service_path, skipping..."
             fi
           done
 
-      - name: Update Kubernetes Deployment
+      - name: Update Kubernetes Deployment for Modified Services
+        if: env.services != ''
         run: |
-          services=("adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frontend" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
-          for service in "${services[@]}"; do
-            kubectl set image deployment/$service $service=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/$service:latest
+          for service in $services; do
+            echo "Updating Kubernetes deployment for $service..."
+            kubectl set image deployment/$service $service=${{ secrets.AWS_ECR_REGISTRY }}/eboutique/$service:latest || true
           done
