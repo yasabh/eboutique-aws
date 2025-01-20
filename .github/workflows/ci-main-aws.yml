@@ -29,7 +29,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
           # List of microservices with correct paths
-          services=("src/adservice" "src/cartservice/src" "src/checkoutservice" "src/currencyservice" "src/emailservice" "src/frontend" "src/loadgenerator" "src/paymentservice" "src/productcatalogservice" "src/recommendationservice" "src/shippingservice" "src/shoppingassistantservice")
+          services=("src/adservice" "src/cartservice" "src/checkoutservice" "src/currencyservice" "src/emailservice" "src/frontend" "src/loadgenerator" "src/paymentservice" "src/productcatalogservice" "src/recommendationservice" "src/shippingservice" "src/shoppingassistantservice")
 
           # Build and push images for each service
           for service in "${services[@]}"; do
@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to EKS
         run: |
           # Apply Kubernetes manifests
-          kubectl apply -k kubernetes-manifests/
+          # kubectl apply -k kubernetes-manifests/
 
           # Update images in deployments
           kubectl set image deployment/adservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/adservice:${{ github.sha }}
