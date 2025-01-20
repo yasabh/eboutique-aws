@@ -29,7 +29,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
           # List of microservices with correct paths
-          services=("src/adservice" "src/checkoutservice" "src/currencyservice" "src/emailservice" "src/frontend" "src/loadgenerator" "src/paymentservice" "src/productcatalogservice" "src/recommendationservice" "src/shippingservice" "src/shoppingassistantservice")
+          services=("src/adservice" "src/checkoutservice" "src/currencyservice" "src/emailservice" "src/frontend" "src/loadgenerator" "src/paymentservice" "src/productcatalogservice" "src/recommendationservice" "src/shippingservice")
 
           # Build and push images for each service
           for service in "${services[@]}"; do
@@ -59,4 +59,3 @@ jobs:
           kubectl set image deployment/productcatalogservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/productcatalogservice:${{ github.sha }}
           kubectl set image deployment/recommendationservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/recommendationservice:${{ github.sha }}
           kubectl set image deployment/shippingservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/shippingservice:${{ github.sha }}
-          kubectl set image deployment/shoppingassistantservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/shoppingassistantservice:${{ github.sha }}
