@@ -54,7 +54,7 @@ jobs:
           kubectl set image deployment/currencyservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/currencyservice:${{ github.sha }}
           kubectl set image deployment/emailservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/emailservice:${{ github.sha }}
           kubectl set image deployment/frontend server=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:${{ github.sha }}
-          kubectl set image deployment/loadgenerator server=${{ steps.ecr-login.outputs.registry }}/eboutique/loadgenerator:${{ github.sha }}
+          kubectl set image deployment/loadgenerator main=${{ steps.ecr-login.outputs.registry }}/eboutique/loadgenerator:${{ github.sha }}
           kubectl set image deployment/paymentservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/paymentservice:${{ github.sha }}
           kubectl set image deployment/productcatalogservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/productcatalogservice:${{ github.sha }}
           kubectl set image deployment/recommendationservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/recommendationservice:${{ github.sha }}
