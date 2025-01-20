@@ -29,7 +29,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
           # List of microservices with correct paths
-          services=("src/frontend")
+          services=("src/adservice" "src/cartservice" "src/checkoutservice" "src/currencyservice" "src/emailservice" "src/frontend" "src/loadgenerator" "src/paymentservice" "src/productcatalogservice" "src/recommendationservice" "src/shippingservice" "src/shoppingassistantservice")
 
           # Build and push images for each service
           for service in "${services[@]}"; do
@@ -48,4 +48,15 @@ jobs:
           kubectl apply -k kubernetes-manifests/
 
           # Update images in deployments
+          kubectl set image deployment/adservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/adservice:${{ github.sha }}
+          kubectl set image deployment/cartservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/cartservice:${{ github.sha }}
+          kubectl set image deployment/checkoutservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/checkoutservice:${{ github.sha }}
+          kubectl set image deployment/currencyservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/currencyservice:${{ github.sha }}
+          kubectl set image deployment/emailservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/emailservice:${{ github.sha }}
           kubectl set image deployment/frontend server=${{ steps.ecr-login.outputs.registry }}/eboutique/frontend:${{ github.sha }}
+          kubectl set image deployment/loadgenerator server=${{ steps.ecr-login.outputs.registry }}/eboutique/loadgenerator:${{ github.sha }}
+          kubectl set image deployment/paymentservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/paymentservice:${{ github.sha }}
+          kubectl set image deployment/productcatalogservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/productcatalogservice:${{ github.sha }}
+          kubectl set image deployment/recommendationservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/recommendationservice:${{ github.sha }}
+          kubectl set image deployment/shippingservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/shippingservice:${{ github.sha }}
+          kubectl set image deployment/shoppingassistantservice server=${{ steps.ecr-login.outputs.registry }}/eboutique/shoppingassistantservice:${{ github.sha }}
